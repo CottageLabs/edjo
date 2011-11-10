@@ -1,0 +1,308 @@
+# SolrEyes Configuration File
+#############################
+#
+# This JSON formatted document provides all the configuration for the SolrEyes application.
+#
+# Note that the comment lines (lines starting with #) are not part of the JSON specification,
+# but support for them has been added to the configuration parser. 
+#
+{
+    "base_url" : "http://localhost:8080/",
+    "index_engine" : "solr_dao",
+    "index_class" : "SolrDAO",
+    "template_engine" : "makoui",
+    "template_class" : "MakoTemplate",
+    
+    # BRUCE template configuration
+    "bruce_service_title" : "BRUCE :: Brunel Research Under a CERIF Environment",
+    "bruce_service_header" : "BRUCE <br/> Brunel Research Under a CERIF Environment",
+    "bruce_result_view" : "table-view.mako",
+    # page size options to offer to the user (an array of integers)
+    "bruce_results_per_page_options" : [10, 20, 50, 100],
+    # determine whether the free text search will be displayed or not
+    "bruce_allow_text_search" : true,
+    
+    # Cottage Labs template configuration
+    "cottagelabs_service_title" : "edjo @ cottage labs",
+    "cottagelabs_service_header" : "edjo @ cottage labs",
+    
+    # Solr index configuration
+    "solr_url" : "http://localhost:8983/solr",
+    "solr_request_handler" : "/cerif",
+    # specify the text search field in your solr configuration (commonly this is just "text")
+    "solr_text_search_field" : "text",
+    
+    # Generic faceting configuration
+    # default results per page (integer)
+    "default_results_per_page" : 10,
+    # default minimum number of results required to trigger a facet being included (integer)
+    "facet_mincount" : 1,
+    
+    # {
+    ## All facets
+    #   "field" : "<facet field name>", "display" : "<facet display name>",
+    #   "type" : "<facet type, one of: field, date, range, query>",
+    #   "value_functions" : [ 
+    #       {"<function name>" : 
+    #           {"<function arg>" : "<arg value>", ...}
+    #       }, 
+    #       ... 
+    #   ],
+    #
+    ##  if type is date
+    #   "min" : "<minimum facet date>",
+    #   "max" : "<maximum facet date>",
+    #   "gap" : "<minimum range gap>",
+    #   "mincount" : "<minimum count per range>"
+    ##
+    ## if type is range
+    #   "min" : "<minimum facet value>",
+    #   "max" : "<maximum facet value>",
+    #   "gap" : "<minimum range gap>",
+    #   "mincount" : "<minimum count per range>",
+    #   "infinity" : "<effective infinite value for unbound ranges>",
+    ##
+    ## if type is query
+    #   "queries" : [ 
+    #       {"display" : "<display value for results>", "query" : "<lucene query>"},
+    #        ...
+    #   ],
+    ##
+    ## if date or range
+    # "upper_display_functions" : [
+    #       {"<function name>" : 
+    #           {"<function arg>" : "<arg value>", ...}
+    #       },
+    #       ... 
+    #   ],
+    ##
+    # }
+    #
+    "facets" : [
+        {
+            "field" : "entity", "display" : "Report On",
+            "type" : "field",
+            "value_functions" : [
+                {"value_map" : {"cfPers" : "People"}}
+            ]
+        },
+#        {
+#            "field" : "publication_date", "display" : "Publication Year",
+#            "type" : "date", 
+#            "min" : "1850-01-01T00:00:00Z", "max" : "1910-01-01T00:00:00Z", 
+#            "gap" : "+1YEAR", "mincount" : 2,
+#            "value_functions" : [
+#                {"regex_map" : {"expression" : "([\\d]{4})-.*"}}
+#            ],
+#            "upper_display_functions" : [
+#                {"years_different" : {}}
+#            ]
+#        },
+        {
+            "field" : "org_unit_name", "display" : "Org Unit",
+            "type" : "field"
+        },
+        {
+            "field" : "gender", "display" : "Gender",
+            "type" : "field",
+            "value_functions" : [
+                {"value_map" : {"M" : "Male", "F" : "Female"}}
+            ]
+        },
+        {
+            "field" : "fte", "display" : "FTE",
+            "type" : "field"
+        },
+#        {
+#            "field" : "contract_end", "display" : "Contract End",
+#            "type" : "date",
+#            "min" : "1850-01-01T00:00:00Z", "max" : "1910-01-01T00:00:00Z", 
+#            "gap" : "+1YEAR", "mincount" : 2,
+#            "value_functions" : [
+#                {"regex_map" : {"expression" : "([\\d]{4})-.*"}}
+#            ],
+#            "upper_display_functions" : [
+#                {"years_different" : {}}
+#            ]
+#        },
+        {
+            "field" : "funding_code", "display" : "Funding Code",
+            "type" : "field"
+        },
+        {
+            "field" : "primary_position", "display" : "Position",
+            "type" : "field"
+        }
+        #{
+        #    "field" : "publication_date", "display" : "Reporting Period",
+        #    "type" : "query",
+        #    "queries" : [
+        #        {
+        #            "display" : "RAE 2001", 
+        #            "query" : "[1800-01-01T00:00:00Z TO 1899-12-31T23:59:59Z]"
+        #        },
+        #        {
+        #            "display" : "RAE 2008", 
+        #            "query" : "[1900-01-01T00:00:00Z TO 1910-01-01T00:00:00Z]"
+        #        }
+        #    ]
+        #}
+    ],
+    
+    # {
+    ##  All fields
+    #   "field" : "<field name>",
+    #   "display" : "<display name>",
+    #   "type" : "<field type, one of: value, dynamic>",
+    #   "value_functions" : [ 
+    #       {"<function name>" : 
+    #           {"<function arg>" : "<arg value>", ...}
+    #       }, 
+    #       ... 
+    #   ],
+    #
+    ##  if type is dynamic
+    #   "generator_functions" : [
+    #       {"<function name>" : 
+    #           {"<function arg>" : "<arg value>", ...}
+    #       }, 
+    #       ... 
+    #   ],
+    ##
+    # }
+    #
+    "fields" : [
+        {
+            "field" : "primary_department", "display" : "Department", "type" : "value"
+        },
+        {
+            "field" : "primary_position", "display" : "Position", "type" : "value"
+        },
+        {
+            "field" : "name", "display" : "Name", "type" : "value"
+        },
+        {
+            "field" : "gender", "display" : "Gender", "type" : "value"
+        },
+        {
+            "field" : "fte", "display" : "FTE", "type" : "value"
+        },
+        {
+            "field" : "contract_end", "display" : "Contract End", "type" : "value",
+            "value_functions" : [
+                {"regex_map" : {"expression" : "([\\d]{4}-[\\d]{2}-[\\d]{2}).*"}}
+            ]
+        },
+        {
+            "field" : "funding_code", "display" : "Funding Code", "type" : "value"
+        },
+        {
+            "field" : "period_publications_count", "display" : "Publications in period", 
+            "type" : "dynamic",
+            "generator_functions" : [
+                {
+                    "date_range_count" : {
+                        "bounding_field" : "publication_date", 
+                        "results_field" : "publication_date"
+                    }
+                }
+            ]
+        },
+        {
+            "field" : "period_journal_count", "display" : "Journals in period", 
+            "type" : "dynamic",
+            "generator_functions" : [
+                {
+                    "date_range_count" : {
+                        "bounding_field" : "publication_date", 
+                        "results_field" : "journal_date"
+                    }
+                }
+            ]
+        },
+        {
+            "field" : "period_book_count", "display" : "Books in period", 
+            "type" : "dynamic",
+            "generator_functions" : [
+                {
+                    "date_range_count" : {
+                        "bounding_field" : "publication_date", 
+                        "results_field" : "book_date"
+                    }
+                }
+            ]
+        },
+        {
+            "field" : "period_chapter_count", "display" : "Chapters in period", 
+            "type" : "dynamic",
+            "generator_functions" : [
+                {
+                    "date_range_count" : {
+                        "bounding_field" : "publication_date", 
+                        "results_field" : "chapter_date"
+                    }
+                }
+            ]
+        },
+        {
+            "field" : "period_conference_count", "display" : "Conferences in period", 
+            "type" : "dynamic",
+            "generator_functions" : [
+                {
+                    "date_range_count" : {
+                        "bounding_field" : "publication_date", 
+                        "results_field" : "conference_date"
+                    }
+                }
+            ]
+        },
+        {
+            "field" : "phd_supervisions", "display" : "Total PhD Supervisions", 
+            "type" : "dynamic",
+            "generator_functions" : [
+                {
+                    "array_count" : { "count_field" : "supervising" }
+                }
+            ]
+        }
+    ],
+    
+    # {
+    #   "field" : "<field name>",
+    #   "display" : "<display name>"
+    # }
+    "sort" : [
+        {"field" : "primary_department", "display" : "Department"},
+        {"field" : "contract_end", "display" : "Contract End"},
+        {"field" : "name", "display" : "Name"},
+        {"field" : "fte", "display" : "FTE"}
+    ],
+    
+    "conneg" : {
+        "default" : {
+            "mimetype" : "text/html",
+            "language" : "en"
+        },
+        "acceptable" : [
+            {
+                "mimetype" : "text/html",
+                "language" : "en",
+                "suffix" : "html",
+                "format_name" : "html",
+                "template_name" : "bruce"
+            },
+            {
+                "mimetype" : "text/json",
+                "suffix" : "json",
+                "format_name" : "json",
+                "template_name" : "default",
+                "language" : "en"
+            }
+        ],
+        "weights" : {
+            "language" : 1.0,
+            "content_type" : 1.0
+        }
+    }
+}
+
