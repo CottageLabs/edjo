@@ -1,9 +1,38 @@
 import operator
 
+"""
+args =
+{
+    # search query parameters
+    # all query parameters are ANDed together (in Solr impl)
+    "q" : {
+        "range" : [lower, upper],
+        "field" : [value1, value2, value3, ...],
+        "date" : [lower, upper], 
+        "query" : [query1, query2, query3, ...] # not implemented
+    },
+    "search" : "free text",
+    
+    # paging/result set information
+    "start" : 0, # start position
+    "rows" : 10, # total result set size to return
+    "sort" : [["field", "asc|desc"], ...]
+    
+    # all of these are field names as specified in the configuration
+    # for facets.  The remaining details for these are acquired from
+    # the facet configuration (e.g. min, max, for ranges)
+    "facet_field" : ["field1", "field2", ...],
+    "facet_range" : ["field1", "field2", ...],
+    "facet_date" : ["field1", "field2", ...],
+    "facet_query" : ["field1", "field2", ...]
+}
+"""
+
 class DAO(object):
     def __init__(self, config): pass
     def initial(self, args): pass
     def search(self, args): pass
+    def record(self, id): pass
     
 class ResultManager(object):
     def __init__(self, results, config, args):

@@ -16,7 +16,7 @@
     <%include file="/header.mako"/>
     
     <div id="navigation">
-        <%include file="/facets-graphical.mako"/>
+        <%include file="/facets-expandable.mako"/>
     </div>
     
     <div id="panel">

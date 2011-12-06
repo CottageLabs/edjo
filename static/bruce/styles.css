@@ -218,6 +218,10 @@ table {
     padding-bottom: 15px;
 }
 
+.empty_facet {
+    color: #dddddd;
+}
+
 .data_table {
     border-bottom: 1px solid #000000;
 }

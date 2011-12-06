@@ -16,6 +16,7 @@ class Field(object):
         self.value_functions = value_functions
         
     def get_value(self, args, result): pass
+    def get_value_array(self, args, result): pass
 
 class ValueField(Field):
     def __init__(self, field, display, value_functions=None):
@@ -30,6 +31,16 @@ class ValueField(Field):
             return ", ".join(parts)
         else:
             return self._pipeline(value)
+            
+    def get_value_array(self, args, result):
+        arr = []
+        value = result.get(self.field)
+        if hasattr(value, "append"):
+            for val in value:
+                arr.append(self._pipeline(val))
+        else:
+            arr.append(self._pipeline(value))
+        return arr
             
     def _pipeline(self, value):
         value = unicode(value)
@@ -166,6 +177,7 @@ class Configuration(object):
         self.facets = self._load_facets()
         self.fields = self._load_fields()
         self.sort = self._load_sort()
+        self.record = self._load_record()
     
     def get_facet(self, facet_name):
         for facet in self.facets:
@@ -293,6 +305,17 @@ class Configuration(object):
                 c += line
         return json.loads(c)
     
+    def _load_record(self):
+        record = []
+        for field in self.cfg['record']:
+            funcs = None
+            vfs = field.get('value_functions')
+            if vfs is not None:
+                funcs = self._load_functions(vfs)
+            f = ValueField(field.get('field'), field.get('display'), funcs)
+            record.append(f)
+        return record
+    
     def _load_conneg(self):
         default = self.cfg['conneg']['default']
         acceptable = self.cfg['conneg']['acceptable']
@@ -409,7 +432,7 @@ class Configuration(object):
 
 
 class UrlManager(object):
-    def __init__(self, config, args, implicit_facets):
+    def __init__(self, config, args=None, implicit_facets=None):
         self.config = config
         self.args = args if args is not None else self.config.get_default_args()
         self.implicit_facets = implicit_facets
@@ -524,4 +547,17 @@ class UrlManager(object):
                 del myargs['sort'][i]
                 break
         j = json.dumps(myargs)
+        return self.config.base_url + "?a=" + urllib2.quote(j)
+        
+    def get_record_url(self, record):
+        id = record.get(self.config.unique_id_field)
+        base = self.config.record_base_url
+        if not base.endswith("/"):
+            base = base + "/"
+        record_url = base + id
+        j = json.dumps(self.base_args)
+        return record_url + "?a=" + urllib2.quote(j)
+        
+    def get_this_url(self):
+        j = json.dumps(self.base_args)
         return self.config.base_url + "?a=" + urllib2.quote(j)

@@ -5,7 +5,81 @@ from negotiator import ContentNegotiator
 # create a global configuration
 global_configuration = Configuration()
 
-class SolrEyesGenericController(object):
+class EdjoGenericController(object):
+    def get_accept_parameters(self, accept, accept_language):
+        # do the content negotiation
+        cn = ContentNegotiator(default_accept_parameters=self.config.accepts_default, 
+                                acceptable=self.config.accepts, weights=self.config.conneg_weights)
+        ap = cn.negotiate(accept=accept, accept_language=accept_language)
+        return ap
+    
+    def get_mimetype(self, suffix, accept_parameters):
+        if suffix is not None:
+            return self.config.get_mimetype(suffix)
+        else:
+            return self.config.get_mimetype(accept_parameters)
+            
+    def _get_suffix(self, path):
+        bits = path.split("/")
+        last_path_part = bits[-1]
+        file_parts = last_path_part.split(".")
+        if len(file_parts) > 1:
+            return file_parts[-1]
+        return None
+        
+    def _construct_args(self, a, q):
+        args = None
+        if a is not None:
+            a = urllib2.unquote(a)
+            args = json.loads(a)
+        
+        initial_request = False
+        if args is None:
+            args = self.config.get_default_args()
+            initial_request = True
+        
+        if q is not None and q != "":
+            initial_request = False
+            args["search"] = q
+        
+        return initial_request, args
+
+class EdjoGenericRecordController(EdjoGenericController):
+    def GET(self, id=None):
+        """
+        method to handle GET request; override this in specific controllers
+        
+        GET request will contain the following features
+        - id: the id of the item to be displayed
+        """
+        self.config = global_configuration
+        
+    def process(self, a, q, id):
+        # turn the incoming arguments to the args parameter
+        initial_request, args = self._construct_args(a, q)
+        
+        properties = self._ui_properties(args)
+        index_factory = IndexFactory(self.config)
+        s = index_factory.get_index_dao()
+        properties['record'] = s.record(id)
+        return properties
+        
+    def _ui_properties(self, args):
+        properties = {}
+        properties['config'] = self.config
+        
+        # set the UrlManager for the UI to use
+        properties['url_manager'] = UrlManager(self.config, args)
+        
+        return properties
+    
+    def render_record(self, properties, suffix, accept_parameters):
+        # call the render engine
+        template_factory = TemplateFactory(self.config)
+        t = template_factory.get_template_engine()
+        return t.render_record(properties, suffix, accept_parameters)
+
+class EdjoGenericIndexController(EdjoGenericController):
     def GET(self, path=None):
         """
         method to handle GET request; override this in specific controllers
@@ -56,23 +130,6 @@ class SolrEyesGenericController(object):
         properties['url_manager'] = UrlManager(self.config, args, implicit_facets)
         
         return properties
-    
-    def _construct_args(self, a, q):
-        args = None
-        if a is not None:
-            a = urllib2.unquote(a)
-            args = json.loads(a)
-        
-        initial_request = False
-        if args is None:
-            args = self.config.get_default_args()
-            initial_request = True
-        
-        if q is not None and q != "":
-            initial_request = False
-            args["search"] = q
-        
-        return initial_request, args
         
     def _add_implicit_facets(self, path, args):
         implicit_facets = {}
@@ -99,29 +156,8 @@ class SolrEyesGenericController(object):
                         implicit_facets[field] = [value]
         return implicit_facets
     
-    def _get_suffix(self, path):
-        bits = path.split("/")
-        last_path_part = bits[-1]
-        file_parts = last_path_part.split(".")
-        if len(file_parts) > 1:
-            return file_parts[-1]
-        return None
-    
-    def get_accept_parameters(self, accept, accept_language):
-        # do the content negotiation
-        cn = ContentNegotiator(default_accept_parameters=self.config.accepts_default, 
-                                acceptable=self.config.accepts, weights=self.config.conneg_weights)
-        ap = cn.negotiate(accept=accept, accept_language=accept_language)
-        return ap
-    
-    def get_mimetype(self, suffix, accept_parameters):
-        if suffix is not None:
-            return self.config.get_mimetype(suffix)
-        else:
-            return self.config.get_mimetype(accept_parameters)
-    
-    def render(self, properties, suffix, accept_parameters):
+    def render_index(self, properties, suffix, accept_parameters):
         # call the render engine
         template_factory = TemplateFactory(self.config)
         t = template_factory.get_template_engine()
-        return t.render(properties, suffix, accept_parameters)
+        return t.render_index(properties, suffix, accept_parameters)

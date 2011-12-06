@@ -97,6 +97,11 @@ def years_different(dict, lower, upper):
     lyear = regex_map({"expression" : "([\\d]{4})-.*"}, unicode(lower))
     uyear = regex_map({"expression" : "([\\d]{4})-.*"}, unicode(upper))
     return lyear != uyear
+    
+def days_different(dict, lower, upper):
+    ldate = regex_map({"expression" : "([\\d]{4}-[\\d]{2}-[\\d]{2}).*"}, unicode(lower))
+    udate = regex_map({"expression" : "([\\d]{4}-[\\d]{2}-[\\d]{2}).*"}, unicode(upper))
+    return ldate != udate
 
 ################ GENERATOR FUNCTIONS ########################
 

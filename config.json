@@ -8,10 +8,15 @@
 #
 {
     "base_url" : "http://localhost:8080/",
+    "record_base_url" : "http://localhost:8080/record/",
     "index_engine" : "solr_dao",
     "index_class" : "SolrDAO",
     "template_engine" : "makoui",
     "template_class" : "MakoTemplate",
+    
+    # generic index configuration
+    # which field element the record's unique id is in
+    "unique_id_field" : "id",
     
     # BRUCE template configuration
     "bruce_service_title" : "BRUCE :: Brunel Research Under a CERIF Environment",
@@ -86,18 +91,18 @@
                 {"value_map" : {"cfPers" : "People"}}
             ]
         },
-#        {
-#            "field" : "publication_date", "display" : "Publication Year",
-#            "type" : "date", 
-#            "min" : "1850-01-01T00:00:00Z", "max" : "1910-01-01T00:00:00Z", 
-#            "gap" : "+1YEAR", "mincount" : 2,
-#            "value_functions" : [
-#                {"regex_map" : {"expression" : "([\\d]{4})-.*"}}
-#            ],
-#            "upper_display_functions" : [
-#                {"years_different" : {}}
-#            ]
-#        },
+        {
+            "field" : "publication_date", "display" : "Publication Year",
+            "type" : "date", 
+            "min" : "1850-01-01T00:00:00Z", "max" : "1910-01-01T00:00:00Z", 
+            "gap" : "+1YEAR", "mincount" : 2,
+            "value_functions" : [
+                {"regex_map" : {"expression" : "([\\d]{4})-.*"}}
+            ],
+            "upper_display_functions" : [
+                {"years_different" : {}}
+            ]
+        },
         {
             "field" : "org_unit_name", "display" : "Org Unit",
             "type" : "field"
@@ -113,18 +118,18 @@
             "field" : "fte", "display" : "FTE",
             "type" : "field"
         },
-#        {
-#            "field" : "contract_end", "display" : "Contract End",
-#            "type" : "date",
-#            "min" : "1850-01-01T00:00:00Z", "max" : "1910-01-01T00:00:00Z", 
-#            "gap" : "+1YEAR", "mincount" : 2,
-#            "value_functions" : [
-#                {"regex_map" : {"expression" : "([\\d]{4})-.*"}}
-#            ],
-#            "upper_display_functions" : [
-#                {"years_different" : {}}
-#            ]
-#        },
+        {
+            "field" : "contract_end", "display" : "Contract End",
+            "type" : "date",
+            "min" : "1850-01-01T00:00:00Z", "max" : "1910-01-01T00:00:00Z", 
+            "gap" : "+1YEAR", "mincount" : 2,
+            "value_functions" : [
+                {"regex_map" : {"expression" : "([\\d]{4})-.*"}}
+            ],
+            "upper_display_functions" : [
+                {"years_different" : {}}
+            ]
+        },
         {
             "field" : "funding_code", "display" : "Funding Code",
             "type" : "field"
@@ -278,6 +283,26 @@
         {"field" : "fte", "display" : "FTE"}
     ],
     
+    "record" : [
+        {"field" : "name", "display" : "Name"},
+        {
+            "field" : "gender", "display" : "Gender", 
+            "value_functions" : [
+                {"value_map" : {"M" : "Male", "F" : "Female"}}
+            ]
+        },
+        {"field" : "primary_position", "display" : "Position"},
+        {"field" : "org_unit_name", "display" : "Org Unit"},
+        {"field" : "funding_code", "display" : "Funding Code"},
+        {
+            "field" : "contract_end", "display" : "Contract End",
+            "value_functions" : [
+                {"regex_map" : {"expression" : "([\\d]{4}-[\\d]{2}-[\\d]{2}).*"}}
+            ]
+        },
+        {"field" : "publication_id", "display" : "Publication"}
+    ],
+    
     "conneg" : {
         "default" : {
             "mimetype" : "text/html",
@@ -289,7 +314,7 @@
                 "language" : "en",
                 "suffix" : "html",
                 "format_name" : "html",
-                "template_name" : "bruce"
+                "template_name" : "cottagelabs"
             },
             {
                 "mimetype" : "text/json",

@@ -126,7 +126,7 @@
                 
             <script type="text/javascript">
             
-            var counts = [
+            var data = [
             <% first = True %>
             % for value, count in c['results'].get_ordered_facets(facet.field):
                 % if not first:
@@ -148,77 +148,78 @@
             % endfor
             ]
             
-            var offset = 50;
-            var height = counts.length * 20;
-            var width = 440 + offset;
+            var bar_width = 440;
+            var label_width = 100;
 
             var chart = d3.select("div#fr_${facet.field}")
                         .append("svg:svg")
                         .attr("class", "chart")
-                        .attr("width", width)
-                        .attr("height", height)
+                        .attr("width", (2 * label_width) + bar_width + 100)
+                        .attr("height", data.length * 20)
                         .append("svg:g");
 
-            var x = d3.scale.linear()
-                        .domain([0, d3.max(counts)])
-                        .range([offset, 420 + offset]);
+            var bx = d3.scale.linear()
+                        .domain([0, d3.max(data)])
+                        .range([label_width, bar_width + label_width]);
+                        
+            var tx = d3.scale.linear()
+                        .domain([0, d3.max(data)])
+                        .range([2 * label_width, bar_width + 2 * label_width]);
 
-            var y = d3.scale.ordinal()
-                        .domain(counts)
-                        .rangeBands([0, height]);
-
-            chart.selectAll("rect.bar")
-                    .data(counts)
+            chart.selectAll("rect")
+                    .data(data)
                     .enter().append("svg:rect")
-                    .attr("class", "bar")
-                    .attr("x", offset)
-                    .attr("y", function(d, i) { return i * 20; })
-                    .attr("width", x)
+                    .attr("x", label_width)
+                    .attr("y", function(d, i) {return i * 20})
+                    .attr("width", bx)
                     .attr("height", 20);
-            
-            chart.selectAll("text.facet_counts")
-                    .data(counts)
+                    
+            chart.selectAll("text.count")
+                    .data(data)
                     .enter().append("svg:text")
-                    .attr("class", "facet_counts")
-                    .attr("x", x)
-                    .attr("y", function(d, i) { return i * 20 + 10; })
+                    .attr("class", "count")
+                    .attr("x", tx)
+                    .attr("y", function(d, i) { return i * 20 + 10 })
+                    .attr("dx", 3) // padding-right
+                    .attr("dy", ".35em") // vertical-align: middle
+                    .attr("text-anchor", "start") // text-align: right
+                    .text(String);
+            
+            chart.selectAll("text.name")
+                    .data(names)
+                    .enter().append("svg:text")
+                    .attr("class", "name")
+                    .attr("x", label_width)
+                    .attr("y", function(d, i) { return i * 20 + 10 })
                     .attr("dx", -3) // padding-right
                     .attr("dy", ".35em") // vertical-align: middle
                     .attr("text-anchor", "end") // text-align: right
                     .text(String);
             
-            chart.selectAll("text.facet_names")
-                .data(names)
-                .enter().append("svg:text")
-                .attr("class", "facet_names")
-                .attr("x", 0)
-                .attr("y", function(d, i) { return i * 20 + 10; })
-                .text(String);
-            
             chart.selectAll("line")
-                    .data(x.ticks(10))
+                    .data(bx.ticks(10))
                     .enter().append("svg:line")
-                    .attr("x1", x)
-                    .attr("x2", x)
+                    .attr("x1", bx)
+                    .attr("x2", bx)
                     .attr("y1", 0)
-                    .attr("y2", height)
+                    .attr("y2", data.length * 20)
                     .attr("stroke", "#ccc");
                     
             chart.selectAll("text.rule")
-                    .data(x.ticks(10))
+                    .data(bx.ticks(10))
                     .enter().append("svg:text")
                     .attr("class", "rule")
-                    .attr("x", x)
+                    .attr("x", bx)
                     .attr("y", 0)
                     .attr("dy", -3)
                     .attr("text-anchor", "middle")
                     .text(String);
                     
             chart.append("svg:line")
-                    .attr("x1", offset)
-                    .attr("x2", offset)
+                    .attr("x1", label_width)
+                    .attr("x2", label_width)
                     .attr("y1", 0)
-                    .attr("y2", height)
+                    .attr("y2", data.length * 20)
                     .attr("stroke", "#000");
 
             </script>

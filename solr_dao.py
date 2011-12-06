@@ -10,6 +10,12 @@ class SolrDAO(DAO):
         self.solr = solr.Solr(self.config.solr_url)
         self.select = solr.SearchHandler(self.solr, self.config.solr_request_handler, arg_separator="__")
 
+    def record(self, id):
+        args = {"q" : {self.config.unique_id_field : [id]}}
+        results = self._do_query(args)
+        print results.results.results
+        return results.results.results[0]
+
     def search(self, args):
         return self._do_query(args)
         
@@ -54,6 +60,9 @@ class SolrDAO(DAO):
             elif self.config.is_query_facet(field):
                 pass
             elif field == "*":
+                for value in args['q'][field]:
+                    qs.append(field + ":" + value)
+            else:
                 for value in args['q'][field]:
                     qs.append(field + ":" + value)
         
