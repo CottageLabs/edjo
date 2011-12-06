@@ -140,7 +140,7 @@ class EdjoGenericIndexController(EdjoGenericController):
                 path = path[:-1]
             bits = path.split('/')
             if len(bits) % 2 == 0:
-                self.config.base_url = self.config.base_url + path
+                # self.config.base_url = self.config.base_url + path
                 if not args.has_key('q'):
                     args['q'] = {}
                 for i in range(0, len(bits), 2):

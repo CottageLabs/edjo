@@ -450,6 +450,14 @@ class UrlManager(object):
                 del myargs['q'][field]
         return myargs
     
+    def get_base_url(self):
+        burl = self.config.base_url
+        for key in self.implicit_facets.keys():
+            burl += key
+            for v in self.implicit_facets[key]:
+                burl += "/" + v
+        return burl
+    
     def get_search_form_action(self):
         return self.config.base_url
     
