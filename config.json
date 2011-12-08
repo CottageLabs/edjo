@@ -9,8 +9,8 @@
 {
     "base_url" : "http://localhost:8080/",
     "record_base_url" : "http://localhost:8080/record/",
-    "index_engine" : "solr_dao",
-    "index_class" : "SolrDAO",
+    "index_engine" : "es_dao",
+    "index_class" : "ElasticSearchDAO",
     "template_engine" : "makoui",
     "template_class" : "MakoTemplate",
     
@@ -31,6 +31,11 @@
     "cottagelabs_service_title" : "edjo @ cottage labs",
     "cottagelabs_service_header" : "edjo @ cottage labs",
     
+    # ES index configuration
+    "es_url" : "127.0.0.1:9200",
+    "es_db" : "bibserver",
+    "es_exact_facet_field" : ".exact",
+
     # Solr index configuration
     "solr_url" : "http://localhost:8983/solr",
     "solr_request_handler" : "/cerif",
