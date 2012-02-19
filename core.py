@@ -411,11 +411,12 @@ class Configuration(object):
         if vfs is not None:
             vfuncs = self._load_functions(vfs)
         udfs = facet.get('upper_display_functions')
+        ufuncs = None
         if udfs is not None:
             ufuncs = self._load_functions(udfs)
         f = RangeFacet(facet.get('field'), facet.get('display'), facet.get('min'),
                         facet.get('max'), facet.get('gap'), facet.get('mincount'), 
-                        function.get('infinity'), vfuncs, ufuncs)
+                        facet.get('infinity'), vfuncs, ufuncs)
         return f
     
     def _load_functions(self, fs):
