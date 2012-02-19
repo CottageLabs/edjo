@@ -34,10 +34,9 @@
                         % if facet.display_upper(lower, upper):
                             - ${facet.get_value(upper)}
                         % endif
-                        (${c['results'].numFound()})
                         </em>
                     % else:
-                        <em>${facet.get_value(lower)}+ (${c['results'].numFound()})</em>
+                        <em>${facet.get_value(lower)}+</em>
                     % endif
                     &nbsp;<a class="delete_url" href="${c['url_manager'].get_delete_url(facet.field)}">x</a><br/>
                     
@@ -60,10 +59,9 @@
                         % if facet.display_upper(lower, upper):
                             - ${facet.get_value(upper)}
                         % endif
-                        (${c['results'].numFound()})
                         </em>
                     % else:
-                        <em>${facet.get_value(lower)}+ (${c['results'].numFound()})</em>
+                        <em>${facet.get_value(lower)}+</em>
                     % endif
                     &nbsp;<a class="delete_url" href="${c['url_manager'].get_delete_url(facet.field)}">x</a><br/>
                 % endif 
@@ -73,13 +71,16 @@
             % else:
                 % for value, count in c['results'].get_ordered_facets(facet.field):
                     % if c['results'].in_args(facet.field, value):
-                        <em>${facet.get_value(value)}</em>
-                        &nbsp;<a class="delete_url" href="${c['url_manager'].get_delete_url(facet.field, value)}">x</a>
-                        <br/>
+                        <div class="alert-message collapse-message search-constraint success">${facet.get_value(value)}
+                            &nbsp;<a class="close unfloat" href="${c['url_manager'].get_delete_url(facet.field, value)}">x</a>
+                        </div>
                     % endif
                 % endfor
             % endif
             </div>
+            
+            
+            
             
             ## next display the facet values which are available to be selected -->
             <div id="fr_${facet.field}" style="display:none" class="facet_value">
@@ -90,13 +91,20 @@
                 ## only display options if this facet is not already selected
                 % if not c['results'].in_args(facet.field):
                     % for lower, upper, count in c['results'].get_ordered_facets(facet.field):
-                        <a href="${c['url_manager'].get_add_url(facet.field, lower, upper)}">
-                        % if upper != -1:
-                            ${facet.get_value(lower)} - ${facet.get_value(upper)} (${count})
-                        % else:
-                            ${facet.get_value(lower)}+ (${count})
-                        % endif
-                        </a><br/>
+                        <div class="row">
+                            <div class="span2">
+                                <a href="${c['url_manager'].get_add_url(facet.field, lower, upper)}">
+                                % if upper != -1:
+                                    ${facet.get_value(lower)} - ${facet.get_value(upper)}
+                                % else:
+                                    ${facet.get_value(lower)}+ 
+                                % endif
+                                </a>
+                            </div>
+                            <div class="span1">
+                                (${count})
+                            </div>
+                        </div>
                     % endfor
                 % endif
                 <% range = False %>
@@ -106,18 +114,25 @@
                 ## only display options if this facet is not already selected
                 % if not c['results'].in_args(facet.field):
                     % for lower, upper, count in c['results'].get_ordered_facets(facet.field):
-                        <a href="${c['url_manager'].get_add_date_url(facet.field, lower, upper)}">
-                        % if upper != -1:
-                            ${facet.get_value(lower)}
-                            % if facet.display_upper(lower, upper):
-                                - 
-                                ${facet.get_value(upper)} 
-                            % endif
-                            (${count})
-                        % else:
-                            ${facet.get_value(lower)}+ (${count})
-                        % endif
-                        </a><br/>
+                        <div class="row">
+                            <div class="span2">
+                                <a href="${c['url_manager'].get_add_date_url(facet.field, lower, upper)}">
+                                % if upper != -1:
+                                    ${facet.get_value(lower)}
+                                    % if facet.display_upper(lower, upper):
+                                        - 
+                                        ${facet.get_value(upper)} 
+                                    % endif
+                                    
+                                % else:
+                                    ${facet.get_value(lower)}+
+                                % endif
+                                </a>
+                            </div>
+                            <div class="span1">
+                                (${count})
+                            </div>
+                        </div>
                     % endfor
                 % endif
                 <% date_range = False %>
@@ -126,9 +141,16 @@
                 <% other = True %>
                 % for value, count in c['results'].get_ordered_facets(facet.field):
                     % if not c['results'].in_args(facet.field, value):
-                        <a href="${c['url_manager'].get_add_url(facet.field, value)}">
-                        ${facet.get_value(value)} (${count})
-                        </a><br/>
+                        <div class="row">
+                            <div class="span2">
+                                <a href="${c['url_manager'].get_add_url(facet.field, value)}">
+                                ${facet.get_value(value)} 
+                                </a>
+                            </div>
+                            <div class="span1">
+                                (${count})
+                            </div>
+                        </div>
                     % endif
                 % endfor
                 <% other = False %>

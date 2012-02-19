@@ -6,15 +6,15 @@
         Sorting by: 
     </div>
     % for sortby, direction in c['results'].current_sort_order():
-        <div class="current_sort_option">
+        <div class="alert-message collapse-message search-constraint">
         ${c['config'].get_sort_option(sortby).display}
         % if direction == 'asc':
-            (<strong>^</strong> <a href="${c['url_manager'].get_sort_url(sortby, 'desc')}">v</a>)
+            <strong><span class="close unfloat selected-direction">^</span></strong> <a class="close unfloat" href="${c['url_manager'].get_sort_url(sortby, 'desc')}">v</a>
         % endif
         % if direction == 'desc':
-            (<a href="${c['url_manager'].get_sort_url(sortby, 'asc')}">^</a> <strong>v</strong>)
+            <a class="close unfloat" href="${c['url_manager'].get_sort_url(sortby, 'asc')}">^</a> <strong><span class="close unfloat selected-direction">v</span></strong>
         % endif
-        <a class="delete_url" href="${c['url_manager'].get_unsort_url(sortby)}">x</a>
+        <a class="close unfloat" href="${c['url_manager'].get_unsort_url(sortby)}">x</a>
         </div>
         <div class="sort_label">
             then

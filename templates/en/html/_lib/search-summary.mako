@@ -14,7 +14,8 @@
             <% 
                 lower, upper = c['results'].get_range_values(facet.field)
             %>
-            <div class="search_constraint">
+            <!-- <div class="alert-message success"> -->
+            <div class="alert-message collapse-message search-constraint success">
                 ${facet.display} : 
                 % if upper != -1:
                     ${facet.get_value(lower)}
@@ -24,16 +25,16 @@
                 % else:
                     ${facet.get_value(lower)}+
                 % endif
-                &nbsp;<a class="delete_url" href="${c['url_manager'].get_delete_url(facet.field)}">x</a>
+                &nbsp;<a class="close unfloat" href="${c['url_manager'].get_delete_url(facet.field)}">x</a>
             </div>
         
         ## if it is a field or query facet, display normally
         % else:
             % for value in values:
-                <div class="search_constraint">
+                <div class="alert-message collapse-message search-constraint success">
                     ${facet.display} : 
                     ${facet.get_value(value)}
-                    &nbsp;<a class="delete_url" href="${c['url_manager'].get_delete_url(facet.field, value)}">x</a>
+                    &nbsp;<a class="close unfloat" href="${c['url_manager'].get_delete_url(facet.field, value)}">x</a>
                 </div>
             % endfor
         % endif
