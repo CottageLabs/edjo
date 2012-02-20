@@ -1,5 +1,6 @@
 jQuery(document).ready(function() {
 % for facet in c['config'].facets:
-        $("#fh_${facet.field}").toggle(function(){ $("#fr_${facet.field}").show('fast');},function(){$("#fr_${facet.field}").hide('fast');});
+    <% field_name = facet.field.replace(".", "_") %>
+        $("#fh_${field_name}").toggle(function(){ $("#fr_${field_name}").show('fast');},function(){$("#fr_${field_name}").hide('fast');});
 % endfor
     });

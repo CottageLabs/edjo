@@ -3,6 +3,10 @@ from datetime import datetime
 
 ################ DISPLAY VALUE FUNCTIONS ###################
 
+def timestamp_to_datestring(dict, value):
+    dt = datetime.fromtimestamp(float(value))
+    return datetime.strftime(dt, "%H:%M on %d-%m-%Y")
+
 def value_map(dict, value):
     return dict.get(value, value)
 
@@ -33,6 +37,62 @@ def doiify(dict, value):
         return '<a href="' + link + '">' + value + '</a>'
     else:
         return value
+
+def tweet_format(dict, value):
+    nm = value
+    parts = _get_location_pairs(nm, "http://", " ")
+    parts += _get_location_pairs(nm, "@", " ")
+    parts += _get_location_pairs(nm, "#", " ")
+    
+    # read into a sortable dictionary
+    d = {}
+    for (s, f) in parts:
+        d[s] = f
+    
+    # sort the starting points
+    keys = d.keys()
+    keys.sort()
+    
+    # determine the splitting points
+    split_at = [0]
+    for s in keys:
+        f = d.get(s)
+        split_at.append(s)
+        split_at.append(f)
+    
+    # turn the splitting points into pairs
+    pairs = []
+    for i in range(0, len(split_at)):
+        if split_at[i] == -1:
+            break
+        if i + 1 >= len(split_at):
+            end = len(nm)
+        elif split_at[i+1] == -1:
+            end = len(nm)
+        else:
+            end = split_at[i+1]
+        pair = (split_at[i], end)
+        pairs.append(pair)
+    
+    frags = []
+    for s, f in pairs:
+        frags.append(nm[s:f])
+    
+    for i in range(len(frags)):
+        if frags[i].startswith("http://"):
+            frags[i] = _create_url(frags[i])
+        elif frags[i].startswith("#"):
+            frags[i] = _create_hash(frags[i])
+        elif frags[i].startswith("@"):
+            frags[i] = _create_at(frags[i])
+    
+    return "".join(frags)
+    
+def _create_at(at):
+    return "<a href=\"http://twitter.com/" + at[1:] + "\">" + at + "</a>"
+
+def _create_hash(hash):
+    return "<a href=\"http://twitter.com/#!/search?q=%23" + hash[1:] + "\">" + hash + "</a>"
 
 def linkify(dict, value):
     parts = _get_location_pairs(value, "http://", " ")

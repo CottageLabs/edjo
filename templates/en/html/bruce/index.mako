@@ -22,7 +22,7 @@
     <div id="panel">
     
         <%include file="/implicit-title.mako"/>
-        % if c['config'].allow_text_search:
+        % if c['config'].bruce_allow_text_search:
             <%include file="/search-box.mako"/>
         % endif
         <%include file="/search-summary.mako"/>

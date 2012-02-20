@@ -47,7 +47,7 @@ class MakoTemplate(TemplateEngine):
         
         if format is None or template_name is None:
             # actually, this is not acceptable, so we should return a 415
-            return None, None
+            return None, None, None
         
         # The Mako templates are in templates/[lang]/[format]/[template_name]/index.mako
         template_path = os.path.join(res_path, lang, format, template_name)

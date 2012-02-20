@@ -9,6 +9,11 @@ urls = (
 class EdjoWebPyIndexController(EdjoGenericIndexController):
 
     def GET(self, path=None):
+        # sometimes this is just a call for the favicon, which doesn't
+        # exist
+        if path == "favicon.ico":
+            return None
+        
         # call the parent to initialise
         EdjoGenericIndexController.GET(self, path)
         

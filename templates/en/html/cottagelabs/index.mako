@@ -23,7 +23,7 @@
         <div class="content">
 
         <%include file="/implicit-title.mako"/>
-        % if c['config'].allow_text_search:
+        % if c['config'].cottagelabs_allow_text_search:
             <%include file="/search-box.mako"/>
         % endif
         <%include file="/search-summary.mako"/>

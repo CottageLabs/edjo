@@ -12,17 +12,17 @@ class ElasticSearchDAO(DAO):
     def __init__(self, config):
         self.config = config
 
-    def initial(self,args):
+    def initial(self, args):
         return self.search(args)
 
-    def search(self,args):
-        return self._do_query(args=args)
+    def search(self, args):
+        return self._do_query(args=args, rectype=self.config.es_record_type)
 
-    def record(self,id):
-        return self._do_query(element=id)
+    def record(self, id):
+        return self._do_query(element=id, rectype=self.config.es_record_type)
 
-    def delete(self,id):
-        return self._do_query(action='DELETE',element=id)
+    def delete(self, id):
+        return self._do_query(action='DELETE', element=id, rectype=self.config.es_record_type)
 
     def insert(self,args):
         if 'id' in data:
@@ -30,9 +30,9 @@ class ElasticSearchDAO(DAO):
         else:
             id_ = uuid.uuid4().hex
             data['id'] = id_
-        return self._do_query(args=args)
+        return self._do_query(args=args, rectype=self.config.es_record_type)
 
-    def _do_query(self,action='POST',rectype='record',element='_search',args={}):
+    def _do_query(self, action='POST', rectype='record', element='_search', args={}):
         queryparam, data = self.translate(args)
         host = str(self.config.es_url).rstrip('/')
         db_path = self.config.es_db
@@ -108,17 +108,32 @@ class ElasticSearchDAO(DAO):
 
         return queryparam, data
 
+class ElasticSearchResultWrapper(object):
+    def __init__(self, result):
+        self.result = result
+        
+    def get(self, field):
+        parts = field.split(".")
+        return self.drill(self.result, parts)
+        
+    def drill(self, obj, parts):
+        if len(parts) == 1:
+            return obj.get(parts[0])
+        nobj = obj.get(parts[0])
+        if nobj is None:
+            return None
+        return self.drill(nobj, parts[1:])
 
 class ElasticSearchResultManager(ResultManager):
     def __init__(self, results, config, args):
-        print "HELLO", results
+        print "ES Results:", results
         ResultManager.__init__(self, results, config, args)
 
     def get_ordered_facets(self, facet_name):
         if self.config.is_field_facet(facet_name):
             facets = []
             for term in self.results['facets'][facet_name]['terms']:
-                facets.append(term['term'], term['count'])
+                facets.append((term['term'], term['count']))
             return facets
         return False
     
@@ -149,7 +164,9 @@ class ElasticSearchResultManager(ResultManager):
         return int(self.results['hits']['total'])
         
     def set(self):
-        return [rec['_source'] for rec in self.results['hits']['hits']]
+        # FIXME: this needs to filter out the first element, which is a summary
+        # of the query
+        return [ElasticSearchResultWrapper(rec['_source']) for rec in self.results['hits']['hits']]
     
     def last_page_start(self):
         return self.numFound() - (self.numFound() % self.args['rows'])

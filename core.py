@@ -563,7 +563,7 @@ class UrlManager(object):
         base = self.config.record_base_url
         if not base.endswith("/"):
             base = base + "/"
-        record_url = base + id
+        record_url = base + str(id)
         j = json.dumps(self.base_args)
         return record_url + "?a=" + urllib2.quote(j)
         

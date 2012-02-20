@@ -3,6 +3,7 @@
     ## we don't process implicit facets, they are immutable -->
     % if facet.field not in c['implicit_facets']:
         <% f = facet.field %>
+        <% field_name = facet.field.replace(".", "_") %>
         ## a div to contain each facet -->
         <div class="facet">
         ## if the facet has values in the result set, display it and its facet values -->
@@ -10,11 +11,11 @@
         
             ## facet name, using its display form -->
             <div class="facet_heading">
-                <a href="" id="fh_${facet.field}">+&nbsp;${facet.display}</a>
+                <a href="" id="fh_${field_name}">+&nbsp;${facet.display}</a>
             </div>
             
             ## first display the facet values which have already been selected -->
-            <div id="selected_${facet.field}" class="facet_value">
+            <div id="selected_${field_name}" class="facet_value">
             
             ## if this is a ranged facet, display it as a range -->
             % if c['config'].is_range_facet(facet.field):
@@ -83,7 +84,7 @@
             
             
             ## next display the facet values which are available to be selected -->
-            <div id="fr_${facet.field}" style="display:none" class="facet_value">
+            <div id="fr_${field_name}" style="display:none" class="facet_value">
             
             ## if this is a range facet, display the available ranges
             % if c['config'].is_range_facet(facet.field):
